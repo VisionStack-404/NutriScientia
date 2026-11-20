@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Orbital science ring 1 -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M54,28 A26,12 35 1,0 54,80 A26,12 35 1,0 54,28 Z"
+        android:strokeWidth="4.5"
+        android:strokeColor="#10B981" />
+    <!-- Orbital science ring 2 -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M54,28 A26,12 -35 1,0 54,80 A26,12 -35 1,0 54,28 Z"
+        android:strokeWidth="4.5"
+        android:strokeColor="#34D399" />
+    <!-- Center Nutrisicentia botanical leaf -->
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M54,39 C63,44 65,55 54,67 C43,55 45,44 54,39 Z" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M54,44 L54,65"
+        android:strokeWidth="2"
+        android:strokeColor="#0F172A"
+        android:strokeLineCap="round" />
+</vector>

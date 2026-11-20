@@ -1,0 +1,1152 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const FoodInsightAIApp());
+}
+
+class FoodInsightAIApp extends StatelessWidget {
+  const FoodInsightAIApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    const green = Color(0xFF10B981);
+
+    return MaterialApp(
+      title: 'FoodInsightAI',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: const Color(0xFF090D16),
+        colorScheme: const ColorScheme.dark(
+          primary: green,
+          secondary: Color(0xFF3B82F6),
+          surface: Color(0xFF131D2E),
+        ),
+      ),
+      home: const MainNavigationScreen(),
+    );
+  }
+}
+
+class MainNavigationScreen extends StatefulWidget {
+  const MainNavigationScreen({super.key});
+
+  @override
+  State<MainNavigationScreen> createState() =>
+      _MainNavigationScreenState();
+}
+
+class _MainNavigationScreenState
+    extends State<MainNavigationScreen> {
+
+  int currentIndex = 0;
+
+  static const green = Color(0xFF10B981);
+  static const blue = Color(0xFF3B82F6);
+  static const card = Color(0xFF131D2E);
+
+  final titles = [
+    'FoodInsightAI',
+    'Food Scanner',
+    'FOOD LAB™',
+    'Overview',
+    'Profile',
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF0F172A),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: green,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.auto_awesome,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  titles[currentIndex],
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Text(
+                  'Personal Food Intelligence',
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: Colors.white54,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    'Backend: http://10.0.2.2:8000',
+                  ),
+                ),
+              );
+            },
+            icon: const Icon(
+              Icons.dns_outlined,
+              color: green,
+            ),
+          ),
+        ],
+      ),
+
+      body: IndexedStack(
+        index: currentIndex,
+        children: [
+          HomeScreen(
+            onScan: () => setState(() => currentIndex = 1),
+            onLab: () => setState(() => currentIndex = 2),
+          ),
+          const ScanScreen(),
+          const FoodLabScreen(),
+          const OverviewScreen(),
+          const ProfileScreen(),
+        ],
+      ),
+
+      bottomNavigationBar: NavigationBar(
+        backgroundColor: const Color(0xFF0F172A),
+        indicatorColor: green.withOpacity(0.2),
+        selectedIndex: currentIndex,
+        onDestinationSelected: (index) {
+          setState(() {
+            currentIndex = index;
+          });
+        },
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home, color: green),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.camera_alt_outlined),
+            selectedIcon: Icon(Icons.camera_alt, color: green),
+            label: 'Scan',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.science_outlined),
+            selectedIcon: Icon(Icons.science, color: green),
+            label: 'FOOD LAB',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.dashboard_outlined),
+            selectedIcon: Icon(Icons.dashboard, color: green),
+            label: 'Overview',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person, color: green),
+            label: 'Profile',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ==========================================
+// HOME SCREEN
+// ==========================================
+
+class HomeScreen extends StatelessWidget {
+  final VoidCallback onScan;
+  final VoidCallback onLab;
+
+  const HomeScreen({
+    super.key,
+    required this.onScan,
+    required this.onLab,
+  });
+
+  static const green = Color(0xFF10B981);
+  static const blue = Color(0xFF3B82F6);
+  static const card = Color(0xFF131D2E);
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          // HERO SECTION
+
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(22),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [
+                  Color(0xFF173B35),
+                  Color(0xFF101827),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: green.withOpacity(0.35),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 7,
+                  ),
+                  decoration: BoxDecoration(
+                    color: green.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.verified,
+                        color: green,
+                        size: 15,
+                      ),
+                      SizedBox(width: 7),
+                      Text(
+                        'AI FOOD INTELLIGENCE HUB',
+                        style: TextStyle(
+                          color: green,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                const Text(
+                  'Understand Your Food.\nMake Smarter Choices.',
+                  style: TextStyle(
+                    fontSize: 25,
+                    height: 1.3,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                const Text(
+                  'Analyze food, discover ingredients, explore nutrition and experiment with food combinations using AI.',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 13,
+                    height: 1.6,
+                  ),
+                ),
+
+                const SizedBox(height: 22),
+
+                Row(
+                  children: [
+
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: onScan,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: green,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 14,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        icon: const Icon(Icons.camera_alt),
+                        label: const Text('Scan Meal'),
+                      ),
+                    ),
+
+                    const SizedBox(width: 12),
+
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: onLab,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: blue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 14,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        icon: const Icon(Icons.science),
+                        label: const Text('FOOD LAB'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 25),
+
+          const Text(
+            'Explore Our Platform',
+            style: TextStyle(
+              fontSize: 19,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+          const SizedBox(height: 15),
+
+          Row(
+            children: [
+              Expanded(
+                child: FeatureCard(
+                  title: 'Food Analysis',
+                  description: 'AI food recognition and ingredients.',
+                  icon: Icons.document_scanner,
+                  color: green,
+                  onTap: onScan,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: FeatureCard(
+                  title: 'FOOD LAB™',
+                  description: 'Virtual food experiments.',
+                  icon: Icons.biotech,
+                  color: blue,
+                  onTap: onLab,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 25),
+
+          const Text(
+            'How FoodInsightAI Works',
+            style: TextStyle(
+              fontSize: 19,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+          const SizedBox(height: 15),
+
+          const InfoCard(
+            icon: Icons.upload_file,
+            title: '01. Upload Food Image',
+            description: 'Upload or capture your food photograph.',
+          ),
+
+          const InfoCard(
+            icon: Icons.auto_awesome,
+            title: '02. AI Recognition',
+            description: 'AI identifies food and visible ingredients.',
+          ),
+
+          const InfoCard(
+            icon: Icons.analytics,
+            title: '03. Food Intelligence',
+            description: 'Explore estimated nutrition and food insights.',
+          ),
+
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+}
+
+// ==========================================
+// FEATURE CARD
+// ==========================================
+
+class FeatureCard extends StatelessWidget {
+  final String title;
+  final String description;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  const FeatureCard({
+    super.key,
+    required this.title,
+    required this.description,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color(0xFF131D2E),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: color.withOpacity(0.3),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(
+              icon,
+              color: color,
+              size: 30,
+            ),
+            const SizedBox(height: 15),
+            Text(
+              title,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 7),
+            Text(
+              description,
+              style: const TextStyle(
+                color: Colors.white60,
+                fontSize: 11,
+                height: 1.5,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ==========================================
+// INFORMATION CARD
+// ==========================================
+
+class InfoCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String description;
+
+  const InfoCard({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.description,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: const Color(0xFF131D2E),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            color: const Color(0xFF10B981),
+            size: 27,
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  description,
+                  style: const TextStyle(
+                    color: Colors.white60,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ==========================================
+// FOOD SCANNER SCREEN
+// ==========================================
+
+class ScanScreen extends StatelessWidget {
+  const ScanScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          const Text(
+            'Food Photo Scanner',
+            style: TextStyle(
+              fontSize: 23,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          const Text(
+            'Discover what is on your plate.',
+            style: TextStyle(
+              color: Colors.white60,
+            ),
+          ),
+
+          const SizedBox(height: 25),
+
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(30),
+            decoration: BoxDecoration(
+              color: const Color(0xFF131D2E),
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(
+                color: const Color(0xFF10B981).withOpacity(0.4),
+              ),
+            ),
+            child: Column(
+              children: [
+
+                Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFF10B981).withOpacity(0.15),
+                  ),
+                  child: const Icon(
+                    Icons.document_scanner,
+                    color: Color(0xFF10B981),
+                    size: 55,
+                  ),
+                ),
+
+                const SizedBox(height: 25),
+
+                const Text(
+                  'Analyze Your Food',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                const Text(
+                  'Upload a food image to identify food items, ingredients and other visible characteristics.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white60,
+                    fontSize: 13,
+                    height: 1.5,
+                  ),
+                ),
+
+                const SizedBox(height: 25),
+
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Connect image_picker to enable image uploading.',
+                          ),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF10B981),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.all(16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    icon: const Icon(Icons.upload_file),
+                    label: const Text('Upload Food Image'),
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Connect camera support to enable capture.',
+                          ),
+                        ),
+                      );
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.all(15),
+                    ),
+                    icon: const Icon(Icons.camera_alt),
+                    label: const Text('Capture Image'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          const InfoCard(
+            icon: Icons.restaurant,
+            title: 'Food Recognition',
+            description: 'Identify visible food items.',
+          ),
+
+          const InfoCard(
+            icon: Icons.science,
+            title: 'Ingredient Analysis',
+            description: 'Inspect visible ingredients and uncertainties.',
+          ),
+
+          const InfoCard(
+            icon: Icons.analytics,
+            title: 'Nutrition Insights',
+            description: 'Display nutrition estimates when supported by data.',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ==========================================
+// FOOD LAB SCREEN
+// ==========================================
+
+class FoodLabScreen extends StatefulWidget {
+  const FoodLabScreen({super.key});
+
+  @override
+  State<FoodLabScreen> createState() => _FoodLabScreenState();
+}
+
+class _FoodLabScreenState extends State<FoodLabScreen> {
+
+  final foodOne = TextEditingController();
+  final foodTwo = TextEditingController();
+
+  String result = '';
+
+  @override
+  void dispose() {
+    foodOne.dispose();
+    foodTwo.dispose();
+    super.dispose();
+  }
+
+  void runExperiment() {
+    if (foodOne.text.trim().isEmpty ||
+        foodTwo.text.trim().isEmpty) {
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter both food items.'),
+        ),
+      );
+
+      return;
+    }
+
+    setState(() {
+      result =
+          'Experiment: ${foodOne.text} + ${foodTwo.text}\n\n'
+          'Your experiment request is ready. '
+          'Connect your Python backend to generate scientific '
+          'nutrition, compatibility and safety analysis.';
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          const Text(
+            'FOOD LAB™',
+            style: TextStyle(
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+          const SizedBox(height: 6),
+
+          const Text(
+            'Virtual Food Experimentation Laboratory',
+            style: TextStyle(
+              color: Colors.white60,
+              fontSize: 12,
+            ),
+          ),
+
+          const SizedBox(height: 22),
+
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: const Color(0xFF131D2E),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: const Color(0xFF3B82F6).withOpacity(0.4),
+              ),
+            ),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.biotech,
+                  color: Color(0xFF3B82F6),
+                  size: 40,
+                ),
+                SizedBox(height: 15),
+                Text(
+                  'Explore Food Combinations',
+                  style: TextStyle(
+                    fontSize: 19,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Combine different foods and submit an experiment for scientific analysis.',
+                  style: TextStyle(
+                    color: Colors.white60,
+                    fontSize: 13,
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 25),
+
+          const Text(
+            'Food Item 01',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          TextField(
+            controller: foodOne,
+            decoration: InputDecoration(
+              hintText: 'Example: Vanilla Ice Cream',
+              filled: true,
+              fillColor: const Color(0xFF131D2E),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          const Center(
+            child: Icon(
+              Icons.add_circle,
+              color: Color(0xFF3B82F6),
+              size: 35,
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          const Text(
+            'Food Item 02',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          TextField(
+            controller: foodTwo,
+            decoration: InputDecoration(
+              hintText: 'Example: Gulab Jamun',
+              filled: true,
+              fillColor: const Color(0xFF131D2E),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 25),
+
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: runExperiment,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF3B82F6),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.all(16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+              icon: const Icon(Icons.play_arrow),
+              label: const Text('Run Experiment'),
+            ),
+          ),
+
+          if (result.isNotEmpty) ...[
+            const SizedBox(height: 25),
+
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: const Color(0xFF131D2E),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: const Color(0xFF10B981),
+                ),
+              ),
+              child: Text(
+                result,
+                style: const TextStyle(
+                  fontSize: 13,
+                  height: 1.6,
+                ),
+              ),
+            ),
+          ],
+
+          const SizedBox(height: 20),
+
+          const InfoCard(
+            icon: Icons.warning_amber,
+            title: 'Food Safety',
+            description:
+                'This preview does not establish whether a food combination is safe to consume.',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ==========================================
+// OVERVIEW DASHBOARD
+// ==========================================
+
+class OverviewScreen extends StatelessWidget {
+  const OverviewScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          const Text(
+            'Overview Dashboard',
+            style: TextStyle(
+              fontSize: 23,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          Row(
+            children: const [
+              Expanded(
+                child: MetricCard(
+                  title: 'Meals Scanned',
+                  value: '0',
+                  icon: Icons.restaurant,
+                  color: Color(0xFF10B981),
+                ),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: MetricCard(
+                  title: 'Experiments',
+                  value: '0',
+                  icon: Icons.science,
+                  color: Color(0xFF3B82F6),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 25),
+
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: const Color(0xFF131D2E),
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Recent Activity',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 25),
+                Center(
+                  child: Icon(
+                    Icons.inbox_outlined,
+                    size: 45,
+                    color: Colors.white38,
+                  ),
+                ),
+                SizedBox(height: 12),
+                Center(
+                  child: Text(
+                    'No activity yet',
+                    style: TextStyle(color: Colors.white60),
+                  ),
+                ),
+                SizedBox(height: 8),
+                Center(
+                  child: Text(
+                    'Your completed food analyses will appear here.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white38,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ==========================================
+// METRIC CARD
+// ==========================================
+
+class MetricCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final IconData icon;
+  final Color color;
+
+  const MetricCard({
+    super.key,
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: const Color(0xFF131D2E),
+        borderRadius: BorderRadius.circular(17),
+        border: Border.all(
+          color: color.withOpacity(0.3),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 15),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 27,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            title,
+            style: const TextStyle(
+              color: Colors.white60,
+              fontSize: 11,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ==========================================
+// PROFILE SCREEN
+// ==========================================
+
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(18),
+      children: [
+
+        Container(
+          padding: const EdgeInsets.all(25),
+          decoration: BoxDecoration(
+            color: const Color(0xFF131D2E),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: const Column(
+            children: [
+              CircleAvatar(
+                radius: 42,
+                backgroundColor: Color(0xFF174B40),
+                child: Icon(
+                  Icons.person,
+                  size: 45,
+                  color: Color(0xFF10B981),
+                ),
+              ),
+              SizedBox(height: 15),
+              Text(
+                'FoodInsightAI User',
+                style: TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 6),
+              Text(
+                'Personal Food Intelligence Profile',
+                style: TextStyle(
+                  color: Colors.white60,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 20),
+
+        const InfoCard(
+          icon: Icons.restaurant_menu,
+          title: 'Dietary Preferences',
+          description: 'Manage your food preferences.',
+        ),
+
+        const InfoCard(
+          icon: Icons.history,
+          title: 'Analysis History',
+          description: 'View your previous food analyses.',
+        ),
+
+        const InfoCard(
+          icon: Icons.notifications,
+          title: 'Notifications',
+          description: 'Manage application notifications.',
+        ),
+
+        const InfoCard(
+          icon: Icons.settings,
+          title: 'Settings',
+          description: 'Application configuration.',
+        ),
+
+        const SizedBox(height: 20),
+
+        const Center(
+          child: Text(
+            'FoodInsightAI © 2026',
+            style: TextStyle(
+              color: Colors.white38,
+              fontSize: 11,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}

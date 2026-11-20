@@ -1,0 +1,203 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global safety net: deny everything by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Reusable security primitives
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidPreferences(prefs) {
+      return prefs is map
+        && prefs.keys().hasAll(['theme', 'notifications'])
+        && prefs.keys().hasOnly(['theme', 'notifications'])
+        && prefs.theme is string
+        && prefs.theme in ['light', 'dark']
+        && prefs.notifications is map
+        && prefs.notifications.keys().hasAll([
+          'foodAnalysisAlerts',
+          'foodLabNotifications',
+          'reportNotifications',
+          'appUpdates'
+        ])
+        && prefs.notifications.keys().hasOnly([
+          'foodAnalysisAlerts',
+          'foodLabNotifications',
+          'reportNotifications',
+          'appUpdates'
+        ])
+        && prefs.notifications.foodAnalysisAlerts is bool
+        && prefs.notifications.foodLabNotifications is bool
+        && prefs.notifications.reportNotifications is bool
+        && prefs.notifications.appUpdates is bool;
+    }
+
+    // Strict schema validator for UserProfile
+    function isValidUserProfile(data, userId) {
+      return data.keys().hasAll([
+          'uid',
+          'name',
+          'email',
+          'dietaryPreference',
+          'allergies',
+          'healthGoals',
+          'calorieTargetPerMeal',
+          'createdAt',
+          'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'uid',
+          'name',
+          'email',
+          'age',
+          'photoUrl',
+          'dietaryPreference',
+          'allergies',
+          'healthGoals',
+          'calorieTargetPerMeal',
+          'preferences',
+          'createdAt',
+          'updatedAt'
+        ])
+        && data.uid == userId
+        && isValidId(data.uid)
+        && data.name is string && data.name.size() >= 1 && data.name.size() <= 80
+        && data.email is string && data.email.size() >= 3 && data.email.size() <= 160
+        && (!('age' in data) || data.age == null || (data.age is number && data.age >= 1 && data.age <= 120))
+        && (!('photoUrl' in data) || data.photoUrl == null || (data.photoUrl is string && data.photoUrl.size() <= 200000))
+        && data.dietaryPreference is string
+        && data.dietaryPreference in ['Vegetarian', 'Vegan', 'Pescatarian', 'Omnivore', 'Keto', 'Gluten-Free']
+        && data.allergies is list
+        && data.allergies.size() <= 15
+        && (data.allergies.size() == 0 || (data.allergies[0] is string && data.allergies[0].size() <= 40))
+        && data.healthGoals is string && data.healthGoals.size() >= 1 && data.healthGoals.size() <= 80
+        && data.calorieTargetPerMeal is number && data.calorieTargetPerMeal >= 100 && data.calorieTargetPerMeal <= 3000
+        && (!('preferences' in data) || isValidPreferences(data.preferences))
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    // Strict schema validator for MealHistoryEntry
+    function isValidMealHistoryEntry(data, userId, entryId) {
+      return data.keys().hasAll([
+          'id',
+          'userId',
+          'foodName',
+          'calories',
+          'proteinGrams',
+          'createdAt'
+        ])
+        && data.keys().hasOnly([
+          'id',
+          'userId',
+          'foodName',
+          'cuisine',
+          'category',
+          'calories',
+          'proteinGrams',
+          'carbsGrams',
+          'fatGrams',
+          'matchScore',
+          'overallRisk',
+          'thumbnailUrl',
+          'analysisSnapshot',
+          'createdAt'
+        ])
+        && data.id == entryId
+        && isValidId(data.id)
+        && data.userId == userId
+        && isValidId(data.userId)
+        && data.foodName is string && data.foodName.size() >= 1 && data.foodName.size() <= 120
+        && (!('cuisine' in data) || (data.cuisine is string && data.cuisine.size() <= 80))
+        && (!('category' in data) || (data.category is string && data.category.size() <= 80))
+        && data.calories is number && data.calories >= 0 && data.calories <= 10000
+        && data.proteinGrams is number && data.proteinGrams >= 0 && data.proteinGrams <= 1000
+        && (!('carbsGrams' in data) || (data.carbsGrams is number && data.carbsGrams >= 0 && data.carbsGrams <= 1000))
+        && (!('fatGrams' in data) || (data.fatGrams is number && data.fatGrams >= 0 && data.fatGrams <= 1000))
+        && (!('matchScore' in data) || (data.matchScore is number && data.matchScore >= 0 && data.matchScore <= 100))
+        && (!('overallRisk' in data) || (data.overallRisk is string && data.overallRisk.size() <= 40))
+        && (!('thumbnailUrl' in data) || data.thumbnailUrl == null || (data.thumbnailUrl is string && data.thumbnailUrl.size() <= 200000))
+        && (!('analysisSnapshot' in data) || data.analysisSnapshot is map)
+        && data.createdAt is timestamp;
+    }
+
+    // User profile document: strict owner-only access (PII isolation)
+    match /users/{userId} {
+      allow get: if isValidId(userId) && isOwner(userId);
+      allow list: if false;
+
+      allow create: if isValidId(userId)
+        && isOwner(userId)
+        && isEmailVerified()
+        && isValidUserProfile(incoming(), userId)
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      allow update: if isValidId(userId)
+        && isOwner(userId)
+        && isEmailVerified()
+        && isValidUserProfile(incoming(), userId)
+        && incoming().uid == existing().uid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'name',
+          'email',
+          'age',
+          'photoUrl',
+          'dietaryPreference',
+          'allergies',
+          'healthGoals',
+          'calorieTargetPerMeal',
+          'preferences',
+          'updatedAt'
+        ]);
+
+      allow delete: if isValidId(userId) && isOwner(userId) && isEmailVerified();
+
+      // User's private meal scan history subcollection
+      match /history/{entryId} {
+        allow get: if isValidId(userId) && isValidId(entryId) && isOwner(userId);
+        allow list: if isValidId(userId) && isOwner(userId) && resource.data.userId == request.auth.uid;
+
+        allow create: if isValidId(userId)
+          && isValidId(entryId)
+          && isOwner(userId)
+          && isEmailVerified()
+          && isValidMealHistoryEntry(incoming(), userId, entryId)
+          && incoming().createdAt == request.time
+          && exists(/databases/$(database)/documents/users/$(userId));
+
+        allow update: if false;
+
+        allow delete: if isValidId(userId) && isValidId(entryId) && isOwner(userId) && isEmailVerified();
+      }
+    }
+  }
+}

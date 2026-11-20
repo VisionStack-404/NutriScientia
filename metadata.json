@@ -1,0 +1,6 @@
+{
+  "name": "FoodInsightAI - Food Intelligence Assistant",
+  "description": "Native Android & Interactive Food Intelligence app with clean REST API architecture, Retrofit/OkHttp services, and 12-screen flow.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

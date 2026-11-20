@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">NutriScientia</string>
+    <string name="foodlab_title">FOOD LAB™</string>
+    <string name="foodlab_subtitle">Virtual Food Experimentation Laboratory</string>
+</resources>

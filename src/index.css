@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", "Manrope", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+}
+
+/* Harmonious dark-mode surface overrides across secondary food analysis & FoodLab cards */
+html.dark body {
+  background-color: #020617;
+  color: #f1f5f9;
+}
+
+html.dark .app-shell-surface {
+  background-color: #0f172a;
+  color: #f1f5f9;
+}
+
+html.dark .app-shell-surface .bg-white,
+html.dark .app-shell-surface .bg-white\/95 {
+  background-color: #1e293b !important;
+  color: #f1f5f9;
+}
+
+html.dark .app-shell-surface .bg-slate-50,
+html.dark .app-shell-surface .bg-slate-50\/70,
+html.dark .app-shell-surface .bg-slate-50\/50,
+html.dark .app-shell-surface .bg-slate-100 {
+  background-color: #0f172a !important;
+  color: #e2e8f0;
+}
+
+html.dark .app-shell-surface .border-slate-200,
+html.dark .app-shell-surface .border-slate-200\/80,
+html.dark .app-shell-surface .border-slate-200\/85,
+html.dark .app-shell-surface .border-slate-200\/90,
+html.dark .app-shell-surface .border-slate-100,
+html.dark .app-shell-surface .border-slate-300 {
+  border-color: #334155 !important;
+}
+
+html.dark .app-shell-surface .text-slate-900,
+html.dark .app-shell-surface .text-slate-800 {
+  color: #f8fafc !important;
+}
+
+html.dark .app-shell-surface .text-slate-700,
+html.dark .app-shell-surface .text-slate-600 {
+  color: #cbd5e1 !important;
+}
+
+html.dark .app-shell-surface .text-slate-500,
+html.dark .app-shell-surface .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+html.dark .app-shell-surface .bg-emerald-50,
+html.dark .app-shell-surface .bg-emerald-50\/75,
+html.dark .app-shell-surface .bg-emerald-50\/60,
+html.dark .app-shell-surface .bg-teal-50,
+html.dark .app-shell-surface .bg-teal-50\/75 {
+  background-color: rgba(6, 78, 59, 0.35) !important;
+  border-color: rgba(16, 185, 129, 0.35) !important;
+}
+
+html.dark .app-shell-surface .text-emerald-950,
+html.dark .app-shell-surface .text-emerald-900,
+html.dark .app-shell-surface .text-emerald-800,
+html.dark .app-shell-surface .text-teal-800 {
+  color: #a7f3d0 !important;
+}
+
+html.dark .app-shell-surface .text-emerald-700,
+html.dark .app-shell-surface .text-teal-700 {
+  color: #6ee7b7 !important;
+}
+
+html.dark .app-shell-surface input,
+html.dark .app-shell-surface select,
+html.dark .app-shell-surface textarea {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

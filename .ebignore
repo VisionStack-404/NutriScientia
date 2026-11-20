@@ -1,0 +1,9 @@
+android/
+flutter/
+dev-dist/
+node_modules/
+.env
+.git/
+.aistudio/
+*.apk
+*.log
