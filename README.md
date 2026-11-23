@@ -969,4 +969,4 @@ The platform is not a certified food-testing laboratory, medical diagnostic syst
 
 *Understand Food. Analyze Science. Explore Innovation.* 🚀   
 
-</div>
+</div>.
