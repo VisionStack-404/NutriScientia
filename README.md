@@ -967,6 +967,6 @@ The platform is not a certified food-testing laboratory, medical diagnostic syst
 
 ### NutriScientia — Food Insight AI
 
-*Understand Food. Analyze Science. Explore Innovation.* 🚀
+*Understand Food. Analyze Science. Explore Innovation.* 🚀   
 
 </div>
